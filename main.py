@@ -48,7 +48,7 @@ def ensure_schema(conn: sqlite3.Connection) -> None:
     # 兜底内置表结构（与 schema.sql 一致）
     conn.executescript("""
     PRAGMA foreign_keys=OFF;
-    CREATE TABLE IF NOT EXISTS report_products (
+    CREATE TABLE IF NOT EXISTS wealth_products (
       product_id INTEGER PRIMARY KEY AUTOINCREMENT,
       product_name TEXT NOT NULL,
       product_yindeng_code TEXT,
@@ -65,8 +65,8 @@ def ensure_schema(conn: sqlite3.Connection) -> None:
       product_raise_institutional REAL,
       product_raise_retail REAL
     );
-    CREATE UNIQUE INDEX IF NOT EXISTS ux_report_products_yindeng ON report_products(product_yindeng_code);
-    CREATE INDEX IF NOT EXISTS ix_report_products_name ON report_products(product_name);
+    CREATE UNIQUE INDEX IF NOT EXISTS ux_wealth_products_yindeng ON wealth_products(product_yindeng_code);
+    CREATE INDEX IF NOT EXISTS ix_wealth_products_name ON wealth_products(product_name);
     """)
     conn.commit()
 
@@ -84,11 +84,11 @@ def upsert_by_yindeng(conn: sqlite3.Connection, row: dict) -> None:
     # 以 product_yindeng_code 为唯一键；为空则直接插入
     ycode = row.get("product_yindeng_code")
     if ycode:
-        cur = conn.execute("SELECT product_id FROM report_products WHERE product_yindeng_code = ?", (ycode,))
+        cur = conn.execute("SELECT product_id FROM wealth_products WHERE product_yindeng_code = ?", (ycode,))
         hit = cur.fetchone()
         if hit:
             conn.execute("""
-            UPDATE report_products
+            UPDATE wealth_products
                SET product_name=?,
                    product_jinshu_code=?,
                    product_custody_code=?,
@@ -121,7 +121,7 @@ def upsert_by_yindeng(conn: sqlite3.Connection, row: dict) -> None:
             ))
             return
     conn.execute("""
-    INSERT INTO report_products(
+    INSERT INTO wealth_products(
       product_name, product_yindeng_code, product_jinshu_code, product_custody_code,
       product_start_date, product_end_date, product_days_total,
       product_query_date, product_days_remaining,
@@ -174,9 +174,9 @@ def import_csv(csv_path: str, query_date: Optional[str] = None) -> None:
 
                 row = {
                     "product_name": name,
-                    "product_yindeng_code": (r.get("银登编码") or r.get("yindeng_code") or "").strip() or None,
-                    "product_jinshu_code": (r.get("金数编码") or r.get("jinshu_code") or "").strip() or None,
-                    "product_custody_code": (r.get("托管编码") or r.get("custody_code") or "").strip() or None,
+                    "product_yindeng_code": (r.get("银登编码") or r.get("product_yindeng_code") or "").strip() or None,
+                    "product_jinshu_code": (r.get("金数编码") or r.get("product_jinshu_code") or "").strip() or None,
+                    "product_custody_code": (r.get("托管编码") or r.get("product_custody_code") or "").strip() or None,
                     "product_start_date": start_date,
                     "product_end_date": end_date,
                     "product_days_total": days_total_val,
@@ -205,7 +205,7 @@ def query_dynamic(query_date: str):
           product_days_total,
           MAX(0, CAST(julianday(product_end_date) - julianday(?) AS INT)) AS days_remaining_calc,
           product_performance_benchmark, product_raise_target, product_raise_amount
-        FROM report_products
+        FROM wealth_products
         ORDER BY product_end_date ASC, product_id ASC
         """
         cur = conn.execute(sql, (qd,))
@@ -226,11 +226,11 @@ def init_db():
 if __name__ == "__main__":
     # 使用指南：
     # 1) 首次初始化（可选）：
-    #    init_db()
+    # init_db()
     #
     # 2) 从 CSV 导入并按查询日计算剩余期限快照（可选）：
-    #    import_csv("products.csv", query_date="2025-08-01")
+       import_csv("products.csv", query_date="2025-08-01")
     #
     # 3) 按给定查询日动态计算（不依赖快照列）：
     #    query_dynamic("2025-08-01")
-    pass
+
