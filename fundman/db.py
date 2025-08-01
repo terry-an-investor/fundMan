@@ -2,8 +2,8 @@ import sqlite3
 from pathlib import Path
 from typing import Dict, Any, Optional
 
-DB_PATH = "fund_report.db"
-SCHEMA_FILE = "schema.sql"
+DB_PATH = "data/fund_report.db"
+SCHEMA_FILE = "data/schema.sql"
 
 
 def get_db_connection() -> sqlite3.Connection:
