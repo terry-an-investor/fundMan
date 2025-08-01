@@ -1,5 +1,5 @@
 PRAGMA foreign_keys=OFF;
-CREATE TABLE IF NOT EXISTS report_products (
+CREATE TABLE IF NOT EXISTS wealth_products (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT NOT NULL,
   yindeng_code TEXT,
@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS report_products (
   raise_institutional REAL,
   raise_retail REAL
 );
-CREATE UNIQUE INDEX IF NOT EXISTS ux_report_products_yindeng ON report_products(yindeng_code);
+CREATE UNIQUE INDEX IF NOT EXISTS ux_wealth_products_yindeng ON wealth_products(yindeng_code);
 -- 可选索引
--- CREATE UNIQUE INDEX IF NOT EXISTS ux_report_products_jinshu ON report_products(jinshu_code);
--- CREATE INDEX IF NOT EXISTS ix_report_products_end_date ON report_products(end_date);
+-- CREATE UNIQUE INDEX IF NOT EXISTS ux_wealth_products_jinshu ON wealth_products(jinshu_code);
+-- CREATE INDEX IF NOT EXISTS ix_wealth_products_end_date ON wealth_products(end_date);
