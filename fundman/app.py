@@ -11,7 +11,7 @@ def main() -> None:
     # init_db()
     #
     # 2) 从 CSV 导入并按查询日计算剩余期限快照（可选）：
-    # import_csv("products.csv", query_date="2025-08-01")
+    # import_csv("data/products.csv", query_date="2025-08-01")
     #
     # 3) 按给定查询日动态计算（不依赖快照列）：
     # conn = get_db_connection()

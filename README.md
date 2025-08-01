@@ -9,14 +9,15 @@ fundman/
 ├── db.py           # 数据库操作模块
 ├── date_utils.py   # 日期处理模块
 ├── data_processor.py # 数据处理模块
-├── main.py         # 程序入口点
-├── products.csv    # 示例数据文件
-├── pyproject.toml  # 项目配置文件
-└── README.md       # 项目说明文档
+└── main.py         # 程序入口点
 
 data/
 ├── fund_report.db  # SQLite数据库文件
-└── schema.sql      # 数据库模式定义
+├── schema.sql      # 数据库模式定义
+└── products.csv    # 示例数据文件
+
+├── pyproject.toml  # 项目配置文件
+└── README.md       # 项目说明文档
 ```
 
 ## 功能介绍

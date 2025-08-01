@@ -21,7 +21,10 @@ def parse_float(s: Optional[str]) -> Optional[float]:
 
 def import_csv(csv_path: str, query_date: Optional[str] = None) -> None:
     """从CSV文件导入数据"""
+    # 如果路径不是绝对路径，尝试在data目录中查找
     path = Path(csv_path)
+    if not path.exists() and not path.is_absolute():
+        path = Path("data") / csv_path
     if not path.exists():
         raise FileNotFoundError(f"CSV 未找到: {csv_path}")
     qd_norm = parse_date(query_date) if query_date else None
