@@ -66,6 +66,7 @@ def ensure_schema(conn: sqlite3.Connection) -> None:
       raise_retail REAL
     );
     CREATE UNIQUE INDEX IF NOT EXISTS ux_report_products_yindeng ON report_products(yindeng_code);
+    CREATE INDEX IF NOT EXISTS ix_report_products_name ON report_products(name);
     """)
     conn.commit()
 
