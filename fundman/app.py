@@ -1,6 +1,6 @@
 from typing import Optional
 from .db import init_db, query_dynamic, get_db_connection
-from .data_processor import import_csv
+from .data_processor import import_data_file
 from .date_utils import parse_date
 
 
@@ -25,7 +25,7 @@ def main() -> None:
     init_db()
     
     # 2) 从 CSV 导入数据
-    import_csv("products.csv", query_date="2025-08-01")
+    import_data_file("products.xlsx", query_date="2025-08-01")
     
     # 3) 动态查询
     conn = get_db_connection()

@@ -34,7 +34,12 @@ python main.py
 
 ## 数据格式
 
-CSV文件应包含以下列：
+支持以下文件格式：
+- CSV (UTF-8编码)
+- XLS (Excel 97-2003格式)
+- XLSX (Excel 2007+格式)
+
+文件应包含以下列：
 - 产品名称
 - 银登编码
 - 金数编码
@@ -52,5 +57,5 @@ CSV文件应包含以下列：
 项目采用模块化设计，各模块职责如下：
 - `db.py` - 负责数据库连接和操作
 - `date_utils.py` - 处理日期相关的函数
-- `data_processor.py` - 处理CSV数据解析和导入
+- `data_processor.py` - 处理数据文件（CSV/XLS/XLSX）解析和导入
 - `app.py` - 主应用程序逻辑
