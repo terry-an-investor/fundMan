@@ -2,9 +2,8 @@ import csv
 from pathlib import Path
 from typing import Optional
 import pandas as pd
-from .date_utils import parse_date, days_between, days_remaining_on
-from .database import get_db
-from .crud import upsert_product_by_yindeng_code, get_all_products
+from .utils.date_utils import parse_date, days_between, days_remaining_on
+from .database import get_db, get_all_products, upsert_product_by_yindeng_code
 from .models import WealthProductCreate, WealthProductInDB
 from datetime import date
 

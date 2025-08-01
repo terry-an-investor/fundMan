@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from typing import List, Optional
-from .models import WealthProductDB, WealthProductCreate, WealthProductUpdate
+from ..models import WealthProductDB, WealthProductCreate, WealthProductUpdate
 
 def get_product_by_yindeng_code(db: Session, yindeng_code: str) -> Optional[WealthProductDB]:
     """根据银登编码获取产品"""

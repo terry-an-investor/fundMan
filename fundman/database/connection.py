@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from pathlib import Path
-from .models import Base
+from ..models import Base
 
 # 数据库配置
 DB_PATH = "data/fund_report.db"
