@@ -49,24 +49,24 @@ def ensure_schema(conn: sqlite3.Connection) -> None:
     conn.executescript("""
     PRAGMA foreign_keys=OFF;
     CREATE TABLE IF NOT EXISTS report_products (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL,
-      yindeng_code TEXT,
-      jinshu_code TEXT,
-      custody_code TEXT,
-      start_date TEXT NOT NULL,
-      end_date TEXT NOT NULL,
-      days_total INTEGER NOT NULL,
-      query_date TEXT,
-      days_remaining INTEGER,
-      performance_benchmark REAL,
-      raise_target REAL,
-      raise_amount REAL,
-      raise_institutional REAL,
-      raise_retail REAL
+      product_id INTEGER PRIMARY KEY AUTOINCREMENT,
+      product_name TEXT NOT NULL,
+      product_yindeng_code TEXT,
+      product_jinshu_code TEXT,
+      product_custody_code TEXT,
+      product_start_date TEXT NOT NULL,
+      product_end_date TEXT NOT NULL,
+      product_days_total INTEGER NOT NULL,
+      product_query_date TEXT,
+      product_days_remaining INTEGER,
+      product_performance_benchmark REAL,
+      product_raise_target REAL,
+      product_raise_amount REAL,
+      product_raise_institutional REAL,
+      product_raise_retail REAL
     );
-    CREATE UNIQUE INDEX IF NOT EXISTS ux_report_products_yindeng ON report_products(yindeng_code);
-    CREATE INDEX IF NOT EXISTS ix_report_products_name ON report_products(name);
+    CREATE UNIQUE INDEX IF NOT EXISTS ux_report_products_yindeng ON report_products(product_yindeng_code);
+    CREATE INDEX IF NOT EXISTS ix_report_products_name ON report_products(product_name);
     """)
     conn.commit()
 
@@ -81,68 +81,68 @@ def days_remaining_on(end_date: str, query_date: str) -> int:
     return max(0, (d_end - d_q).days)
 
 def upsert_by_yindeng(conn: sqlite3.Connection, row: dict) -> None:
-    # 以 yindeng_code 为唯一键；为空则直接插入
-    ycode = row.get("yindeng_code")
+    # 以 product_yindeng_code 为唯一键；为空则直接插入
+    ycode = row.get("product_yindeng_code")
     if ycode:
-        cur = conn.execute("SELECT id FROM report_products WHERE yindeng_code = ?", (ycode,))
+        cur = conn.execute("SELECT product_id FROM report_products WHERE product_yindeng_code = ?", (ycode,))
         hit = cur.fetchone()
         if hit:
             conn.execute("""
             UPDATE report_products
-               SET name=?,
-                   jinshu_code=?,
-                   custody_code=?,
-                   start_date=?,
-                   end_date=?,
-                   days_total=?,
-                   query_date=?,
-                   days_remaining=?,
-                   performance_benchmark=?,
-                   raise_target=?,
-                   raise_amount=?,
-                   raise_institutional=?,
-                   raise_retail=?
-             WHERE id=?
+               SET product_name=?,
+                   product_jinshu_code=?,
+                   product_custody_code=?,
+                   product_start_date=?,
+                   product_end_date=?,
+                   product_days_total=?,
+                   product_query_date=?,
+                   product_days_remaining=?,
+                   product_performance_benchmark=?,
+                   product_raise_target=?,
+                   product_raise_amount=?,
+                   product_raise_institutional=?,
+                   product_raise_retail=?
+             WHERE product_id=?
             """, (
-                row["name"],
-                row.get("jinshu_code"),
-                row.get("custody_code"),
-                row["start_date"],
-                row["end_date"],
-                row["days_total"],
-                row.get("query_date"),
-                row.get("days_remaining"),
-                row.get("performance_benchmark"),
-                row.get("raise_target"),
-                row.get("raise_amount"),
-                row.get("raise_institutional"),
-                row.get("raise_retail"),
+                row["product_name"],
+                row.get("product_jinshu_code"),
+                row.get("product_custody_code"),
+                row["product_start_date"],
+                row["product_end_date"],
+                row["product_days_total"],
+                row.get("product_query_date"),
+                row.get("product_days_remaining"),
+                row.get("product_performance_benchmark"),
+                row.get("product_raise_target"),
+                row.get("product_raise_amount"),
+                row.get("product_raise_institutional"),
+                row.get("product_raise_retail"),
                 hit[0],
             ))
             return
     conn.execute("""
     INSERT INTO report_products(
-      name, yindeng_code, jinshu_code, custody_code,
-      start_date, end_date, days_total,
-      query_date, days_remaining,
-      performance_benchmark, raise_target, raise_amount,
-      raise_institutional, raise_retail
+      product_name, product_yindeng_code, product_jinshu_code, product_custody_code,
+      product_start_date, product_end_date, product_days_total,
+      product_query_date, product_days_remaining,
+      product_performance_benchmark, product_raise_target, product_raise_amount,
+      product_raise_institutional, product_raise_retail
     ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)
     """, (
-        row["name"],
-        row.get("yindeng_code"),
-        row.get("jinshu_code"),
-        row.get("custody_code"),
-        row["start_date"],
-        row["end_date"],
-        row["days_total"],
-        row.get("query_date"),
-        row.get("days_remaining"),
-        row.get("performance_benchmark"),
-        row.get("raise_target"),
-        row.get("raise_amount"),
-        row.get("raise_institutional"),
-        row.get("raise_retail"),
+        row["product_name"],
+        row.get("product_yindeng_code"),
+        row.get("product_jinshu_code"),
+        row.get("product_custody_code"),
+        row["product_start_date"],
+        row["product_end_date"],
+        row["product_days_total"],
+        row.get("product_query_date"),
+        row.get("product_days_remaining"),
+        row.get("product_performance_benchmark"),
+        row.get("product_raise_target"),
+        row.get("product_raise_amount"),
+        row.get("product_raise_institutional"),
+        row.get("product_raise_retail"),
     ))
 
 def import_csv(csv_path: str, query_date: Optional[str] = None) -> None:
@@ -158,35 +158,35 @@ def import_csv(csv_path: str, query_date: Optional[str] = None) -> None:
             reader = csv.DictReader(f)
             count = 0
             for i, r in enumerate(reader, start=1):
-                name = (r.get("产品名称") or r.get("name") or "").strip()
+                name = (r.get("产品名称") or r.get("product_name") or "").strip()
                 if not name:
                     raise ValueError(f"第{i}行缺少 产品名称")
 
-                start_date = parse_date(r.get("起息日") or r.get("start_date") or "")
-                end_date = parse_date(r.get("到期日") or r.get("end_date") or "")
+                start_date = parse_date(r.get("起息日") or r.get("product_start_date") or "")
+                end_date = parse_date(r.get("到期日") or r.get("product_end_date") or "")
                 days_total_val = days_between(start_date, end_date)
 
-                perf = parse_float(r.get("业绩基准") or r.get("performance_benchmark"))
-                raise_target = parse_float(r.get("募集目标") or r.get("raise_target"))
-                raise_amount = parse_float(r.get("募集金额") or r.get("raise_amount"))
-                raise_inst = parse_float(r.get("机构募集") or r.get("raise_institutional"))
-                raise_retail = parse_float(r.get("个人募集") or r.get("raise_retail"))
+                perf = parse_float(r.get("业绩基准") or r.get("product_performance_benchmark"))
+                raise_target = parse_float(r.get("募集目标") or r.get("product_raise_target"))
+                raise_amount = parse_float(r.get("募集金额") or r.get("product_raise_amount"))
+                raise_inst = parse_float(r.get("机构募集") or r.get("product_raise_institutional"))
+                raise_retail = parse_float(r.get("个人募集") or r.get("product_raise_retail"))
 
                 row = {
-                    "name": name,
-                    "yindeng_code": (r.get("银登编码") or r.get("yindeng_code") or "").strip() or None,
-                    "jinshu_code": (r.get("金数编码") or r.get("jinshu_code") or "").strip() or None,
-                    "custody_code": (r.get("托管编码") or r.get("custody_code") or "").strip() or None,
-                    "start_date": start_date,
-                    "end_date": end_date,
-                    "days_total": days_total_val,
-                    "query_date": qd_norm,
-                    "days_remaining": days_remaining_on(end_date, qd_norm) if qd_norm else None,
-                    "performance_benchmark": perf,
-                    "raise_target": raise_target,
-                    "raise_amount": raise_amount,
-                    "raise_institutional": raise_inst,
-                    "raise_retail": raise_retail,
+                    "product_name": name,
+                    "product_yindeng_code": (r.get("银登编码") or r.get("yindeng_code") or "").strip() or None,
+                    "product_jinshu_code": (r.get("金数编码") or r.get("jinshu_code") or "").strip() or None,
+                    "product_custody_code": (r.get("托管编码") or r.get("custody_code") or "").strip() or None,
+                    "product_start_date": start_date,
+                    "product_end_date": end_date,
+                    "product_days_total": days_total_val,
+                    "product_query_date": qd_norm,
+                    "product_days_remaining": days_remaining_on(end_date, qd_norm) if qd_norm else None,
+                    "product_performance_benchmark": perf,
+                    "product_raise_target": raise_target,
+                    "product_raise_amount": raise_amount,
+                    "product_raise_institutional": raise_inst,
+                    "product_raise_retail": raise_retail,
                 }
                 upsert_by_yindeng(conn, row)
                 count += 1
@@ -201,12 +201,12 @@ def query_dynamic(query_date: str):
     try:
         sql = """
         SELECT
-          id, name, yindeng_code, start_date, end_date,
-          days_total,
-          MAX(0, CAST(julianday(end_date) - julianday(?) AS INT)) AS days_remaining_calc,
-          performance_benchmark, raise_target, raise_amount
+          product_id, product_name, product_yindeng_code, product_start_date, product_end_date,
+          product_days_total,
+          MAX(0, CAST(julianday(product_end_date) - julianday(?) AS INT)) AS days_remaining_calc,
+          product_performance_benchmark, product_raise_target, product_raise_amount
         FROM report_products
-        ORDER BY end_date ASC, id ASC
+        ORDER BY product_end_date ASC, product_id ASC
         """
         cur = conn.execute(sql, (qd,))
         rows = cur.fetchall()
