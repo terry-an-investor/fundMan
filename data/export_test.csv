@@ -1,0 +1,3 @@
+product_id,product_name,product_yindeng_code,product_jinshu_code,product_custody_code,product_start_date,product_end_date,product_days_total,product_query_date,product_days_remaining,product_performance_benchmark,product_raise_target,product_raise_amount,product_raise_institutional,product_raise_retail
+1,样例产品A,YD20250001,JS0001,TG001,2025-07-01,2026-07-01,365,2025-08-01,334,0.052000000000000005,10000000.0,6000000.0,5000000.0,1000000.0
+2,样例产品B,YD20250002,JS0002,TG002,2025-08-15,2025-12-31,138,2025-08-01,152,0.045,5000000.0,5000000.0,4000000.0,1000000.0

@@ -23,13 +23,19 @@ data/
 ## 功能介绍
 
 1. **数据库初始化** - 创建SQLite数据库和表结构
-2. **CSV数据导入** - 从CSV文件导入理财产品数据
-3. **动态查询** - 按指定日期查询产品信息和剩余天数
+2. **数据导入** - 从CSV/XLS/XLSX文件导入理财产品数据
+3. **数据导出** - 导出数据为CSV/XLSX格式
+4. **动态查询** - 按指定日期查询产品信息和剩余天数
 
 ## 使用方法
 
 ```bash
-python main.py
+# 导入数据
+python main.py import data/products.csv
+
+# 导出数据
+python main.py export data/export.csv
+python main.py export data/export.xlsx
 ```
 
 ## 数据格式
@@ -57,5 +63,5 @@ python main.py
 项目采用模块化设计，各模块职责如下：
 - `db.py` - 负责数据库连接和操作
 - `date_utils.py` - 处理日期相关的函数
-- `data_processor.py` - 处理数据文件（CSV/XLS/XLSX）解析和导入
+- `data_processor.py` - 处理数据文件导入导出(CSV/XLS/XLSX)
 - `app.py` - 主应用程序逻辑
