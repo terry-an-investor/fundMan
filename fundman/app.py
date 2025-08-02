@@ -1,7 +1,7 @@
 import argparse
 import sys
 import os
-from typing import Optional
+from typing import Optional, List
 # 添加项目根目录到 Python 路径
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
@@ -48,8 +48,8 @@ def query_data(query_date: str) -> None:
         db.close()
 
 
-def main() -> None:
-    """主函数"""
+def build_parser() -> argparse.ArgumentParser:
+    """构建 argparse 解析器（可用于测试）"""
     parser = argparse.ArgumentParser(description="FundMan 理财产品管理系统")
     subparsers = parser.add_subparsers(dest="command", help="可用命令")
     
@@ -84,7 +84,7 @@ def main() -> None:
     investment_subparsers.add_parser("list-transactions", help="列出所有交易")
     
     # 初始化数据库命令
-    init_parser = subparsers.add_parser("init", help="初始化数据库")
+    subparsers.add_parser("init", help="初始化数据库")
     
     # 导入数据命令
     import_parser = subparsers.add_parser("import", help="导入数据")
@@ -99,7 +99,28 @@ def main() -> None:
     # 查询数据命令
     query_parser = subparsers.add_parser("query", help="查询数据")
     query_parser.add_argument("--query-date", required=True, help="查询日期")
-    
+    return parser
+
+
+def parse_args(argv: List[str]) -> argparse.Namespace:
+    """解析参数（可在测试中注入argv以覆盖CLI分支）"""
+    parser = build_parser()
+    return parser.parse_args(argv)
+
+
+def _print_investment_help() -> None:
+    """打印 investment 子命令的帮助，不依赖内部私有属性"""
+    parser = build_parser()
+    # 重新构建一次并打印 investment 的帮助
+    # 由于 argparse 不提供公共API获取已创建的子解析器，只能通过再次构建并定位
+    # 简化实现：直接打印总帮助，或打印特定说明
+    print("用法: fundman.app investment [create-asset|list-assets|create-transaction|list-transactions] [选项]")
+    print("试试: python -m fundman.app investment --help")
+
+
+def main() -> None:
+    """主函数"""
+    parser = build_parser()
     # 如果没有提供参数，显示帮助信息
     if len(sys.argv) == 1:
         parser.print_help()
@@ -213,8 +234,8 @@ def main() -> None:
                 transaction = crud_create_transaction(db, transaction_data)
                 print(f"交易创建成功:")
                 print(f"  ID: {transaction.transaction_id}")
-                print(f"  产品: {product.product_name}")
-                print(f"  资产: {asset.asset_name}")
+                print(f"  产品: {getattr(product, 'product_name', '')}")
+                print(f"  资产: {getattr(asset, 'asset_name', '')}")
                 print(f"  投资日期: {transaction.investment_date}")
                 print(f"  到期日期: {transaction.maturity_date}")
                 print(f"  收益率: {transaction.interest_rate}%")
@@ -257,7 +278,8 @@ def main() -> None:
             finally:
                 db.close()
         else:
-            investment_parser.print_help()
+            # 无子命令时打印帮助以便测试覆盖（避免使用 argparse 私有属性）
+            _print_investment_help()
     else:
         parser.print_help()
 

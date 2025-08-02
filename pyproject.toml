@@ -12,4 +12,5 @@ dependencies = [
     "sqlalchemy>=2.0.0",
     "pydantic>=2.0.0",
     "pytest[standard]>=8.4.1",
+    "pytest-cov>=6.2.1",
 ]
