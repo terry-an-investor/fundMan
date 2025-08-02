@@ -1,12 +1,32 @@
 # Models package
-from .pydantic_models import WealthProductBase, WealthProductCreate, WealthProductUpdate, WealthProductInDB
-from .sqlalchemy_models import Base, WealthProductDB
+from .wealth_product import (
+    Base, WealthProductDB,
+    WealthProductBase, WealthProductCreate, WealthProductUpdate, WealthProductInDB
+)
+from .investment import (
+    AssetDB, TransactionDB,
+    AssetBase, AssetCreate, AssetUpdate, AssetInDB,
+    TransactionBase, TransactionCreate, TransactionUpdate, TransactionInDB
+)
 
 __all__ = [
+    # Wealth Product Models
+    "Base",
+    "WealthProductDB",
     "WealthProductBase",
     "WealthProductCreate",
     "WealthProductUpdate",
     "WealthProductInDB",
-    "Base",
-    "WealthProductDB",
+    
+    # Investment Models
+    "AssetDB",
+    "TransactionDB",
+    "AssetBase",
+    "AssetCreate",
+    "AssetUpdate",
+    "AssetInDB",
+    "TransactionBase",
+    "TransactionCreate",
+    "TransactionUpdate",
+    "TransactionInDB",
 ]

@@ -1,3 +1,9 @@
-product_id,product_name,product_yindeng_code,product_jinshu_code,product_custody_code,product_start_date,product_end_date,product_days_total,product_query_date,product_days_remaining,product_performance_benchmark,product_raise_target,product_raise_amount,product_raise_institutional,product_raise_retail
-1,样例产品A,YD20250001,JS0001,TG001,2025-07-01,2026-07-01,365,2025-08-01,334,0.052000000000000005,10000000.0,6000000.0,5000000.0,1000000.0
-2,样例产品B,YD20250002,JS0002,TG002,2025-08-15,2025-12-31,138,2025-08-01,152,0.045,5000000.0,5000000.0,4000000.0,1000000.0
+product_name,product_yindeng_code,product_jinshu_code,product_custody_code,product_start_date,product_end_date,product_days_total,product_query_date,product_days_remaining,product_performance_benchmark,product_raise_target,product_raise_amount,product_raise_institutional,product_raise_retail,product_id
+样例产品A,YD20250001,JS0001,TG001,2025-07-01,2026-07-01,365,2025-08-01,334,0.052000000000000005,10000000.0,6000000.0,5000000.0,1000000.0,1
+样例产品B,YD20250002,JS0002,TG002,2025-08-15,2025-12-31,138,2025-08-01,152,0.045,5000000.0,5000000.0,4000000.0,1000000.0,2
+测试产品1,YD001,,,2023-01-01,2024-01-01,365,2023-06-01,214,0.05,,1000000.0,600000.0,400000.0,3
+测试产品2,YD002,,,2023-02-01,2024-02-01,365,2023-06-01,245,0.045,2000000.0,1500000.0,1000000.0,500000.0,4
+测试产品3,YD003,,,2023-03-01,2024-03-01,366,2023-06-01,274,0.055,3000000.0,2500000.0,1500000.0,1000000.0,5
+测试产品1,TEST001,JS001,TC001,2025-01-01,2026-01-01,365,2025-08-01,153,0.045,10000000.0,8500000.0,5000000.0,3500000.0,6
+测试产品2,TEST002,JS002,TC002,2025-02-01,2026-02-01,365,2025-08-01,184,0.042,20000000.0,18000000.0,12000000.0,6000000.0,7
+测试产品3,TEST003,JS003,TC003,2025-03-01,2026-03-01,365,2025-08-01,212,0.048,15000000.0,14000000.0,9000000.0,5000000.0,8
