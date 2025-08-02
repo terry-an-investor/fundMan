@@ -42,6 +42,7 @@ def import_data_file(file_path: str, query_date: Optional[str] = None) -> None:
     else:
         raise ValueError(f"不支持的文件格式: {file_extension}")
     
+    # 统一为 YYYY-MM-DD 字符串契约，再按需要转换为 date
     qd_norm = parse_date(query_date) if query_date else None
 
     # 获取数据库会话
@@ -61,11 +62,12 @@ def import_data_file(file_path: str, query_date: Optional[str] = None) -> None:
             start_date_str = r.get("起息日") or r.get("product_start_date") or ""
             end_date_str = r.get("到期日") or r.get("product_end_date") or ""
             
-            start_date = parse_date(start_date_str) if start_date_str else None
-            end_date = parse_date(end_date_str) if end_date_str else None
+            # 规范化为 YYYY-MM-DD 字符串（date_utils 合同）
+            start_date_norm = parse_date(start_date_str) if start_date_str else None
+            end_date_norm = parse_date(end_date_str) if end_date_str else None
             
             # 只有当起息日和到期日都存在时才计算总天数
-            days_total_val = days_between(start_date, end_date) if start_date and end_date else 0
+            days_total_val = days_between(start_date_norm, end_date_norm) if start_date_norm and end_date_norm else 0
 
             perf = parse_float(r.get("业绩基准") or r.get("product_performance_benchmark"))
             raise_target = parse_float(r.get("募集目标") or r.get("product_raise_target"))
@@ -73,11 +75,10 @@ def import_data_file(file_path: str, query_date: Optional[str] = None) -> None:
             raise_inst = parse_float(r.get("机构募集") or r.get("product_raise_institutional"))
             raise_retail = parse_float(r.get("个人募集") or r.get("product_raise_retail"))
 
-            # 创建Pydantic模型实例
-            # 确保日期字段有默认值，不能为None
-            start_date_obj = date.fromisoformat(start_date) if start_date and isinstance(start_date, str) and start_date.strip() else date.today()
-            end_date_obj = date.fromisoformat(end_date) if end_date and isinstance(end_date, str) and end_date.strip() else date.today()
-            query_date_obj = date.fromisoformat(qd_norm) if qd_norm and isinstance(qd_norm, str) and qd_norm.strip() else None
+            # 将规范化字符串转为 date 对象；若缺失则使用今天作为保底，满足 Pydantic 字段为 date 的类型要求
+            start_date_obj = date.fromisoformat(start_date_norm) if start_date_norm else date.today()
+            end_date_obj = date.fromisoformat(end_date_norm) if end_date_norm else date.today()
+            query_date_obj = date.fromisoformat(qd_norm) if qd_norm else None
             
             product_create = WealthProductCreate(
                 product_name=name,
@@ -88,7 +89,7 @@ def import_data_file(file_path: str, query_date: Optional[str] = None) -> None:
                 product_end_date=end_date_obj,
                 product_days_total=days_total_val,
                 product_query_date=query_date_obj,
-                product_days_remaining=days_remaining_on(end_date, qd_norm) if end_date and qd_norm else None,
+                product_days_remaining=days_remaining_on(end_date_norm, qd_norm) if end_date_norm and qd_norm else None,
                 product_performance_benchmark=perf,
                 product_raise_target=raise_target,
                 product_raise_amount=raise_amount,

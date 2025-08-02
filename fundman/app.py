@@ -252,6 +252,8 @@ def main() -> None:
             # 导入投资组合相关模块
             from fundman.crud import get_transactions, get_asset
             from fundman.crud.wealth_product_crud import get_product_by_yindeng_code
+            # 退而求其次：若未提供“按ID取产品”的API，则根据事务中保存的 product_id 作为银登编码的情况做兼容尝试；
+            # 若模型真实存的是 product_id，则建议后续提供 get_product_by_id 并在此替换为按ID查询。
             
             db_gen = get_db()
             db = next(db_gen)
@@ -263,12 +265,18 @@ def main() -> None:
                     print(f"{'ID':<5} {'产品':<15} {'资产':<15} {'投资日期':<12} {'到期日期':<12} {'收益率(%)':<10} {'数量':<10} {'清算金额':<12}")
                     print("-" * 120)
                     for transaction in transactions:
-                        # 获取产品和资产名称
-                        product = get_product_by_yindeng_code(db, str(transaction.product_id))
-                        asset = get_asset(db, transaction.asset_id)
+                        # 获取产品和资产名称（兼容当前可用的查询：按银登编码）
+                        # 注意：如果 transaction.product_id 实为产品ID，则需在 CRUD 提供 get_product_by_id 并替换此处实现
+                        product = None
+                        if hasattr(transaction, "product_id"):
+                            try:
+                                product = get_product_by_yindeng_code(db, str(transaction.product_id))
+                            except Exception:
+                                product = None
+                        asset = get_asset(db, transaction.asset_id) if hasattr(transaction, "asset_id") else None
                         
-                        product_name = product.product_name if product else "未知"
-                        asset_name = asset.asset_name if asset else "未知"
+                        product_name = getattr(product, "product_name", "未知") if product else "未知"
+                        asset_name = getattr(asset, "asset_name", "未知") if asset else "未知"
                         
                         print(f"{transaction.transaction_id:<5} {product_name[:15]:<15} {asset_name[:15]:<15} {transaction.investment_date:<12} {transaction.maturity_date or '':<12} {transaction.interest_rate or '':<10} {transaction.quantity:<10} {transaction.settlement_amount or '':<12}")
                 else:
